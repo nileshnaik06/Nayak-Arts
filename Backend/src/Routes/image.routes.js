@@ -9,11 +9,12 @@ const {
   updateImage,
   deleteImage,
 } = require("../Controller/image.controller");
+const auth = require("../middleware/auth.middleware");
 
-router.post("/", upload.single("image"), uploadImage);
-router.get("/", getImages);
-router.get("/:id", getSingleImage);
-router.put("/:id", updateImage);
-router.delete("/:id", deleteImage);
+router.post("/", auth, upload.single("image"), uploadImage);
+router.get("/", auth, getImages);
+router.get("/:id", auth, getSingleImage);
+router.put("/:id", auth, updateImage);
+router.delete("/:id", auth, deleteImage);
 
 module.exports = router;
