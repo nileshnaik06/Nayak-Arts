@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import { Instagram, Mail, MapPin } from 'lucide-react';
+import { Link } from "react-router-dom";
+import { Instagram, Mail, MapPin } from "lucide-react";
 
 export const Footer = () => {
   return (
@@ -8,13 +8,18 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 lg:gap-16">
           {/* Brand */}
           <div>
-            <Link to="/" className="font-display text-2xl font-medium text-foreground">
+            <Link
+              to="/"
+              className="font-display text-2xl font-medium text-foreground"
+            >
               Puran Nayak
             </Link>
             <p className="mt-4 text-muted-foreground font-body leading-relaxed">
-              Professional artist specializing in thermocol sculptures, paintings, 
-              models, and DIY art—crafting beauty across multiple mediums.
+              Professional artist specializing in thermocol sculptures,
+              paintings, models, and DIY art—crafting beauty across multiple
+              mediums.
             </p>
+            <Link to="/register" className="py-5 text-[#000000] font-body underline">Register</Link>
           </div>
 
           {/* Quick Links */}
@@ -23,7 +28,7 @@ export const Footer = () => {
               Explore
             </h4>
             <ul className="space-y-3">
-              {['Gallery', 'About', 'Contact'].map((item) => (
+              {["Gallery", "About", "Contact"].map((item) => (
                 <li key={item}>
                   <Link
                     to={`/${item.toLowerCase()}`}

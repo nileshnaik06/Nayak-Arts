@@ -13,24 +13,6 @@ export const FeaturedWorks = () => {
   const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
 
   useEffect(() => {
-    const fetchFeatured = async () => {
-      try {
-        const res = await getArtworks({
-          featured: true,
-          limit: 6,
-          page: 1,
-        });
-
-        setFeaturedArtworks(res.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    fetchFeatured();
-  }, []);
-
-  useEffect(() => {
     const section = sectionRef.current;
     if (!section) return;
 
@@ -68,6 +50,23 @@ export const FeaturedWorks = () => {
         "-=0.2",
       );
     }
+
+    const fetchFeatured = async () => {
+      try {
+        const res = await getArtworks({
+          featured: true,
+          page: 1,
+          limit: 6,
+        });
+
+        setFeaturedArtworks(res.data || []);
+      } catch (error) {
+        console.error(error);
+        setFeaturedArtworks([]); // safety fallback
+      }
+    };
+
+    fetchFeatured();
 
     // Hover scale on cards
     cards.forEach((card) => {

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
-import { categories } from '@/data/artworks';
+import { categories } from '@/data/categories';
 import { gsap, ScrollTrigger } from '@/hooks/useGSAP';
 
 export const CategorySection = () => {
@@ -85,9 +85,9 @@ export const CategorySection = () => {
                       <p className="mt-2 text-sm text-background/80 font-body line-clamp-2 max-w-xs">
                         {category.description}
                       </p>
-                      <span className="mt-3 inline-block text-xs uppercase tracking-wider text-background/70 font-body">
+                      {/* <span className="mt-3 inline-block text-xs uppercase tracking-wider text-background/70 font-body">
                         {category.artworkCount} Artworks
-                      </span>
+                      </span> */}
                     </div>
                     <div className="p-2 bg-background/20 backdrop-blur-sm rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <ArrowUpRight size={20} className="text-background" />

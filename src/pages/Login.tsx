@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { registerUser } from "@/lib/api";
+import { loginUser } from "@/lib/api";
 
-const Register = () => {
+const Login = () => {
   const navigate = useNavigate();
 
   const [userName, setUserName] = useState("");
@@ -17,12 +17,12 @@ const Register = () => {
       setLoading(true);
       setError("");
 
-      await registerUser({ userName, password });
+      await loginUser({ userName, password });
 
-      // ✅ Redirect to admin dashboard after successful registration
+      // ✅ Redirect after successful login
       navigate("/admin");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Something went wrong");
+      setError(err.response?.data?.message || "Invalid credentials");
     } finally {
       setLoading(false);
     }
@@ -30,9 +30,9 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8 sm:p-10">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-2xl p-8 sm:p-10">
         <h2 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-6">
-          Create Admin Account
+          Admin Login
         </h2>
 
         {error && (
@@ -75,7 +75,7 @@ const Register = () => {
             disabled={loading}
             className="w-full bg-black text-white py-2 rounded-lg font-medium hover:bg-gray-800 transition disabled:opacity-50"
           >
-            {loading ? "Registering..." : "Register"}
+            {loading ? "Logging in..." : "Login"}
           </button>
         </form>
 
@@ -86,16 +86,16 @@ const Register = () => {
           <div className="flex-grow h-px bg-gray-200"></div>
         </div>
 
-        {/* Login Button */}
+        {/* Register Button */}
         <Link
-          to="/login"
+          to="/register"
           className="block text-center w-full border border-gray-300 py-2 rounded-lg font-medium text-gray-700 hover:bg-gray-100 transition"
         >
-          Already have an account? Login
+          Don't have an account? Register
         </Link>
       </div>
     </div>
   );
 };
 
-export default Register;
+export default Login;
