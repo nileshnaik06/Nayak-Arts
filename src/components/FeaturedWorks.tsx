@@ -1,14 +1,34 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { getFeaturedArtworks, type Artwork } from "@/data/artworks";
+import type { Artwork } from "@/data/artworks";
+import { getArtworks } from "@/lib/api";
 import { ArtworkLightbox } from "./ArtworkLightbox";
 import { gsap, ScrollTrigger } from "@/hooks/useGSAP";
 
 export const FeaturedWorks = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const featuredArtworks = getFeaturedArtworks();
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
+
+  const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      try {
+        const res = await getArtworks({
+          featured: true,
+          limit: 6,
+          page: 1,
+        });
+
+        setFeaturedArtworks(res.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchFeatured();
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -90,7 +110,7 @@ export const FeaturedWorks = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
           {featuredArtworks.map((artwork) => (
             <article
-              key={artwork.id}
+              key={artwork._id}
               data-gsap-card
               className="group cursor-pointer"
               onClick={() => setSelectedArtwork(artwork)}
