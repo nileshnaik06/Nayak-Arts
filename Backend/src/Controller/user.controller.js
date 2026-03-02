@@ -42,8 +42,8 @@ async function createUser(req, res) {
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: true, // MUST be true in production
-      sameSite: "none", // REQUIRED for cross-site cookies
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
     return res.status(201).json({
@@ -82,8 +82,8 @@ async function loginUser(req, res) {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
   res.cookie("token", token, {
     httpOnly: true,
-    secure: true, // MUST be true in production
-    sameSite: "none", // REQUIRED for cross-site cookies
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   });
 
   res.status(200).json({
