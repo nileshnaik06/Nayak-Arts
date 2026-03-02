@@ -36,16 +36,14 @@ async function createUser(req, res) {
       password: hashPass,
     });
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     res.cookie("token", token, {
       httpOnly: true,
-      secure: false, // true in production HTTPS
-      sameSite: "lax",
+      secure: true, // MUST be true in production
+      sameSite: "none", // REQUIRED for cross-site cookies
     });
 
     return res.status(201).json({
@@ -55,7 +53,6 @@ async function createUser(req, res) {
         _id: user._id,
       },
     });
-
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -85,8 +82,8 @@ async function loginUser(req, res) {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
   res.cookie("token", token, {
     httpOnly: true,
-    secure: false, // true only if using HTTPS
-    sameSite: "lax",
+    secure: true, // MUST be true in production
+    sameSite: "none", // REQUIRED for cross-site cookies
   });
 
   res.status(200).json({

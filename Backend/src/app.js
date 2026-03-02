@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "nayak-arts.vercel.app",
+    origin: ["http://localhost:5173", "https://nayak-arts.vercel.app"],
     credentials: true,
   }),
 );
