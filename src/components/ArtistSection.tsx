@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import artistPortrait from '@/assets/artist-portrait.jpg';
+import artistPortrait from '@/assets/artist.jpg';
 import { gsap, ScrollTrigger } from '@/hooks/useGSAP';
 
 export const ArtistSection = () => {
