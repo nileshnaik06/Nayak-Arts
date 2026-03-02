@@ -14,7 +14,7 @@ app.use(
   }),
 );
 
-app.use("/", user);
-app.use("/", images);
+app.use("/api/user", user);
+app.use("/api/images", images);
 
 module.exports = app;
