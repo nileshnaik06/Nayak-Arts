@@ -4,7 +4,6 @@ const user = require("./Routes/user.routes");
 const images = require("./Routes/image.routes");
 const cookieParser = require("cookie-parser");
 
-app.use(cookieParser());
 const app = express();
 app.use(express.json());
 app.use(
@@ -13,6 +12,7 @@ app.use(
     credentials: true,
   }),
 );
+app.use(cookieParser());
 
 app.use("/api/user", user);
 app.use("/api/images", images);
