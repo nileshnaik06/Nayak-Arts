@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { categories } from "@/data/categories";
 import { createImage, deleteImage as deleteImageApi, updateImage as updateImageApi, getArtworks } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface ImageData {
   _id?: string;
@@ -14,6 +16,9 @@ interface ImageData {
 }
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
   const [images, setImages] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -148,6 +153,11 @@ const AdminDashboard = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   const resetForm = () => {
     setFormData({
       title: "",
@@ -167,14 +177,32 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 sm:mb-12">
+        {/* Top Navigation Bar */}
+        <div className="mb-8 sm:mb-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white rounded-lg shadow-md p-4 sm:p-6">
           <div>
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900">
               Admin Dashboard
             </h1>
             <p className="text-sm sm:text-base text-gray-600 mt-2">Manage your art gallery</p>
           </div>
+          
+          {/* User Info & Logout */}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="text-right">
+              <p className="text-sm text-gray-600">Welcome back,</p>
+              <p className="text-lg font-semibold text-gray-900">{user?.userName || "User"}</p>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold transition duration-200 w-full sm:w-auto"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+
+        {/* Header with Add Button */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 sm:mb-12">
           {!showCreateForm && (
             <button
               onClick={() => {

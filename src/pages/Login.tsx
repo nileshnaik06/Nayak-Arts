@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { loginUser } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -17,7 +19,12 @@ const Login = () => {
       setLoading(true);
       setError("");
 
-      await loginUser({ userName, password });
+      const response = await loginUser({ userName, password });
+
+      // Store user data in context and localStorage
+      if (response.user) {
+        login(response.user);
+      }
 
       // ✅ Redirect after successful login
       navigate("/admin");

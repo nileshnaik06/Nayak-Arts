@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { registerUser } from "@/lib/api";
+import { useAuth } from "@/contexts/AuthContext";
 
 const Register = () => {
   const navigate = useNavigate();
+  const { register } = useAuth();
 
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -17,7 +19,12 @@ const Register = () => {
       setLoading(true);
       setError("");
 
-      await registerUser({ userName, password });
+      const response = await registerUser({ userName, password });
+
+      // Store user data in context and localStorage
+      if (response.user) {
+        register(response.user);
+      }
 
       // ✅ Redirect to admin dashboard after successful registration
       navigate("/admin");

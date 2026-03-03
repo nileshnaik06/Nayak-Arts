@@ -9,14 +9,26 @@ export const registerUser = async (data: {
   userName: string;
   password: string;
 }) => {
-  return axios.post(`${API_URL}/api/user/register`, data);
+  const response = await axios.post(`${API_URL}/api/user/register`, data);
+  return response.data;
 };
 
 export const loginUser = async (data: {
   userName: string;
   password: string;
 }) => {
-  return axios.post(`${API_URL}/api/user/login`, data);
+  const response = await axios.post(`${API_URL}/api/user/login`, data);
+  return response.data;
+};
+
+export const getCurrentUser = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/api/user/me`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch current user:", error);
+    throw error;
+  }
 };
 
 export const getArtworks = async (params?: any): Promise<PaginatedResponse> => {

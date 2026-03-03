@@ -13,8 +13,8 @@ const {
 const auth = require("../middleware/auth.middleware");
 
 router.post("/", auth, upload.single("image"), uploadImage);
-router.get("/", auth, getImages);
-router.get("/:id", auth, getSingleImage);
+router.get("/", getImages);
+router.get("/:id", getSingleImage);
 router.put("/:id", auth, updateImage);
 router.delete("/:id", auth, deleteImage);
 
