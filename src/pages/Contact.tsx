@@ -1,11 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Mail, MapPin, Instagram, Send, CheckCircle } from 'lucide-react';
 import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { PageTransition } from '@/components/PageTransition';
 import { toast } from 'sonner';
 import { gsap } from '@/hooks/useGSAP';
+import { sendContactForm } from '@/lib/api';
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, 'Name is required').max(100, 'Name must be less than 100 characters'),
@@ -17,13 +20,9 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 const ContactPage = () => {
-  const [formData, setFormData] = useState<ContactFormData>({
-    name: '',
-    email: '',
-    subject: '',
-    message: '',
+  const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof ContactFormData, string>>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
@@ -41,32 +40,16 @@ const ContactPage = () => {
     }
   }, [isSubmitted]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-    if (errors[name as keyof ContactFormData]) {
-      setErrors((prev) => ({ ...prev, [name]: undefined }));
+  const onSubmit = async (data: ContactFormData) => {
+    try {
+      await sendContactForm(data);
+      setIsSubmitted(true);
+      reset();
+      toast.success('Message sent successfully!');
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      toast.error('Failed to send message. Please try again.');
     }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    const result = contactSchema.safeParse(formData);
-    
-    if (!result.success) {
-      const fieldErrors: Partial<Record<keyof ContactFormData, string>> = {};
-      result.error.issues.forEach((issue) => {
-        const field = issue.path[0] as keyof ContactFormData;
-        fieldErrors[field] = issue.message;
-      });
-      setErrors(fieldErrors);
-      toast.error('Please fix the errors in the form');
-      return;
-    }
-
-    setIsSubmitted(true);
-    toast.success('Message sent successfully!');
   };
 
   if (isSubmitted) {
@@ -85,7 +68,7 @@ const ContactPage = () => {
                 <button
                   onClick={() => {
                     setIsSubmitted(false);
-                    setFormData({ name: '', email: '', subject: '', message: '' });
+                    reset();
                   }}
                   className="mt-8 inline-flex items-center justify-center px-8 py-3 bg-primary text-primary-foreground font-body text-sm uppercase tracking-wider rounded-sm transition-all duration-300 hover:bg-gallery-olive"
                 >
@@ -179,40 +162,59 @@ const ContactPage = () => {
 
               {/* Contact Form */}
               <div data-gsap-right className="lg:col-span-2">
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
                       <label htmlFor="name" className="block text-sm font-body text-foreground mb-2">Name</label>
-                      <input type="text" id="name" name="name" value={formData.name} onChange={handleChange}
+                      <input 
+                        type="text" 
+                        id="name" 
+                        {...register('name')}
                         className={`w-full px-4 py-3 bg-secondary/50 border ${errors.name ? 'border-destructive' : 'border-border'} rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all`}
-                        placeholder="Your name" />
-                      {errors.name && <p className="mt-1 text-sm text-destructive font-body">{errors.name}</p>}
+                        placeholder="Your name" 
+                      />
+                      {errors.name && <p className="mt-1 text-sm text-destructive font-body">{errors.name.message}</p>}
                     </div>
                     <div>
                       <label htmlFor="email" className="block text-sm font-body text-foreground mb-2">Email</label>
-                      <input type="email" id="email" name="email" value={formData.email} onChange={handleChange}
+                      <input 
+                        type="email" 
+                        id="email" 
+                        {...register('email')}
                         className={`w-full px-4 py-3 bg-secondary/50 border ${errors.email ? 'border-destructive' : 'border-border'} rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all`}
-                        placeholder="your@email.com" />
-                      {errors.email && <p className="mt-1 text-sm text-destructive font-body">{errors.email}</p>}
+                        placeholder="your@email.com" 
+                      />
+                      {errors.email && <p className="mt-1 text-sm text-destructive font-body">{errors.email.message}</p>}
                     </div>
                   </div>
                   <div>
                     <label htmlFor="subject" className="block text-sm font-body text-foreground mb-2">Subject</label>
-                    <input type="text" id="subject" name="subject" value={formData.subject} onChange={handleChange}
+                    <input 
+                      type="text" 
+                      id="subject" 
+                      {...register('subject')}
                       className={`w-full px-4 py-3 bg-secondary/50 border ${errors.subject ? 'border-destructive' : 'border-border'} rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all`}
-                      placeholder="What's this about?" />
-                    {errors.subject && <p className="mt-1 text-sm text-destructive font-body">{errors.subject}</p>}
+                      placeholder="What's this about?" 
+                    />
+                    {errors.subject && <p className="mt-1 text-sm text-destructive font-body">{errors.subject.message}</p>}
                   </div>
                   <div>
                     <label htmlFor="message" className="block text-sm font-body text-foreground mb-2">Message</label>
-                    <textarea id="message" name="message" rows={6} value={formData.message} onChange={handleChange}
+                    <textarea 
+                      id="message" 
+                      rows={6} 
+                      {...register('message')}
                       className={`w-full px-4 py-3 bg-secondary/50 border ${errors.message ? 'border-destructive' : 'border-border'} rounded-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all resize-none`}
-                      placeholder="Tell me about your project or inquiry..." />
-                    {errors.message && <p className="mt-1 text-sm text-destructive font-body">{errors.message}</p>}
+                      placeholder="Tell me about your project or inquiry..." 
+                    />
+                    {errors.message && <p className="mt-1 text-sm text-destructive font-body">{errors.message.message}</p>}
                   </div>
-                  <button type="submit"
-                    className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-body text-sm uppercase tracking-wider rounded-sm transition-all duration-300 hover:bg-gallery-olive shadow-soft hover:shadow-elevated">
-                    Send Message
+                  <button 
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-body text-sm uppercase tracking-wider rounded-sm transition-all duration-300 hover:bg-gallery-olive shadow-soft hover:shadow-elevated disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? 'Sending...' : 'Send Message'}
                     <Send size={16} />
                   </button>
                 </form>

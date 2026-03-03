@@ -82,3 +82,14 @@ export const deleteImage = async (id: string) => {
     },
   });
 };
+
+export const sendContactForm = async (data: {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}) => {
+  const response = await axios.post(`${API_URL}/api/contact`, data);
+  // const response = await axios.post(`http://localhost:3000/api/contact`, data);
+  return response.data;
+};

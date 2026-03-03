@@ -2,25 +2,20 @@ const transporter = require("../config/mailer");
 
 exports.sendMail = async (req, res) => {
   try {
+    console.log("Body:", req.body);
+
     const { name, email, message } = req.body;
 
-    const mailOptions = {
-      from: email,
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
       to: process.env.EMAIL_USER,
-      subject: `New Contact Message from ${name}`,
-      html: `
-        <h3>New Message</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Message:</strong> ${message}</p>
-      `,
-    };
+      subject: "Test",
+      text: message,
+    });
 
-    await transporter.sendMail(mailOptions);
-
-    res.status(200).json({ message: "Email sent successfully" });
+    res.status(200).json({ message: "Sent" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to send email" });
+    console.error("Mail Error:", error);
+    res.status(500).json({ message: error.message });
   }
 };
