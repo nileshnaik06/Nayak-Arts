@@ -34,13 +34,18 @@ export const getCurrentUser = async () => {
   }
 };
 
-export const getArtworks = async (): Promise<PaginatedResponse> => {
+export const getArtworks = async (params?: {
+  category?: string;
+  page?: number;
+  limit?: number;
+}): Promise<PaginatedResponse> => {
   const token = localStorage.getItem("token");
 
   const res = await axios.get(`${API_URL}/api/images`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
+    params: params,
   });
 
   return res.data;

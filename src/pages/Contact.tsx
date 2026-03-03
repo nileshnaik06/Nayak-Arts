@@ -122,7 +122,7 @@ const ContactPage = () => {
                         </div>
                         <div>
                           <span className="block text-xs uppercase tracking-wider text-muted-foreground font-body mb-1">Email</span>
-                          <span className="text-foreground font-body group-hover:text-gallery-olive transition-colors">hello@artistry.com</span>
+                          <span className="text-foreground font-body group-hover:text-gallery-olive transition-colors">nayakarts@gmail.com</span>
                         </div>
                       </a>
                     </li>
@@ -133,7 +133,7 @@ const ContactPage = () => {
                         </div>
                         <div>
                           <span className="block text-xs uppercase tracking-wider text-muted-foreground font-body mb-1">Location</span>
-                          <span className="text-foreground font-body">Mumbai, India</span>
+                          <span className="text-foreground font-body">Chhattisgarh, India</span>
                         </div>
                       </div>
                     </li>
@@ -144,7 +144,7 @@ const ContactPage = () => {
                         </div>
                         <div>
                           <span className="block text-xs uppercase tracking-wider text-muted-foreground font-body mb-1">Instagram</span>
-                          <span className="text-foreground font-body group-hover:text-gallery-olive transition-colors">@artistry.studio</span>
+                          <span className="text-foreground font-body group-hover:text-gallery-olive transition-colors">nayak.arts</span>
                         </div>
                       </a>
                     </li>

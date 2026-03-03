@@ -1,11 +1,49 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { categories } from '@/data/categories';
 import { gsap, ScrollTrigger } from '@/hooks/useGSAP';
+import { getArtworks } from '@/lib/api';
 
 export const CategorySection = () => {
   const sectionRef = useRef<HTMLElement>(null);
+  const [categoryImages, setCategoryImages] = useState<{ [key: string]: string }>({});
+  const [loading, setLoading] = useState(true);
+
+  // Fetch images for each category
+  useEffect(() => {
+    const fetchCategoryImages = async () => {
+      const images: { [key: string]: string } = {};
+      
+      try {
+        const response = await getArtworks();
+        
+        // Group images by category and get the first one for each
+        for (const category of categories) {
+          const categoryData = response.data.find((img: any) => img.category === category.id);
+          if (categoryData) {
+            images[category.id] = categoryData.image;
+          } else {
+            // Fallback to original image if no API image found
+            images[category.id] = category.image;
+          }
+        }
+        setCategoryImages(images);
+      } catch (error) {
+        console.error("Failed to fetch category images:", error);
+        // Fallback to original images on error
+        const fallbackImages: { [key: string]: string } = {};
+        categories.forEach((cat) => {
+          fallbackImages[cat.id] = cat.image;
+        });
+        setCategoryImages(fallbackImages);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategoryImages();
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -67,7 +105,7 @@ export const CategorySection = () => {
               >
                 {/* Image */}
                 <img
-                  src={category.image}
+                  src={categoryImages[category.id] || category.image}
                   alt={category.name}
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />

@@ -21,7 +21,7 @@ export const categories: Category[] = [
     image: "/category-images/paintings.jpg",
   },
   {
-    id: "Model Creaetion",
+    id: "Model Creation",
     name: "Model Creation",
     description:
       "Detailed architectural and sculptural models.",

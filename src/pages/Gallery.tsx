@@ -53,15 +53,21 @@ const GalleryPage = () => {
       try {
         setLoading(true);
 
-        const res = await getArtworks({
-          category: categoryId || undefined,
+        const params: any = {
           page: 1,
           limit: 50,
-        });
+        };
+
+        // Only add category filter if categoryId exists
+        if (categoryId) {
+          params.category = categoryId;
+        }
+
+        const res = await getArtworks(params);
 
         setArtworks(res?.data || []);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching artworks:", error);
         setArtworks([]); // prevent crash
       } finally {
         setLoading(false);
@@ -105,28 +111,34 @@ const GalleryPage = () => {
             </div>
           </section>
 
-          {/* Category Filter (only on main gallery) */}
-          {!categoryId && (
-            <section className="gallery-container mb-12">
-              <div className="flex flex-wrap gap-3">
+          {/* Category Filter */}
+          <section className="gallery-container mb-12">
+            <div className="flex flex-wrap gap-3">
+              <Link
+                to="/gallery"
+                className={`px-5 py-2 rounded-full font-body text-sm transition-all ${
+                  !categoryId
+                    ? "bg-primary text-primary-foreground"
+                    : "border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"
+                }`}
+              >
+                All
+              </Link>
+              {categories.map((category) => (
                 <Link
-                  to="/gallery"
-                  className="px-5 py-2 rounded-full font-body text-sm bg-primary text-primary-foreground transition-all"
+                  key={category.id}
+                  to={`/gallery/${category.id}`}
+                  className={`px-5 py-2 rounded-full font-body text-sm transition-all ${
+                    categoryId === category.id
+                      ? "bg-primary text-primary-foreground"
+                      : "border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"
+                  }`}
                 >
-                  All
+                  {category.name}
                 </Link>
-                {categories.map((category) => (
-                  <Link
-                    key={category.id}
-                    to={`/gallery/${category.id}`}
-                    className="px-5 py-2 rounded-full font-body text-sm border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all"
-                  >
-                    {category.name}
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
+              ))}
+            </div>
+          </section>
 
           {/* Masonry Grid */}
           <section className="gallery-container">

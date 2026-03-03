@@ -64,7 +64,7 @@ export const Footer = () => {
                   className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-body"
                 >
                   <Mail size={16} />
-                  hello@artistry.com
+                 nayakarts@gmail.com
                 </a>
               </li>
               <li>
@@ -75,13 +75,13 @@ export const Footer = () => {
                   className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-body"
                 >
                   <Instagram size={16} />
-                  @artistry.studio
+                 nayal.arts
                 </a>
               </li>
               <li>
-                <span className="flex items-center gap-2 text-muted-foreground font-body">
+                <span className="flex items-center gap-2 text-muted-foreground font-body cursor-pointer hover:text-foreground transition-colors font-body">
                   <MapPin size={16} />
-                  Mumbai, India
+                  Chhattisgarh, India
                 </span>
               </li>
             </ul>
