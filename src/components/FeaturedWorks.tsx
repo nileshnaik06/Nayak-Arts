@@ -4,11 +4,13 @@ import { ArrowRight } from "lucide-react";
 import type { Artwork } from "@/data/artworks";
 import { getArtworks } from "@/lib/api";
 import { ArtworkLightbox } from "./ArtworkLightbox";
+import { Skeleton } from "./ui/skeleton";
 import { gsap, ScrollTrigger } from "@/hooks/useGSAP";
 
 export const FeaturedWorks = () => {
   const sectionRef = useRef<HTMLElement>(null);
   const [selectedArtwork, setSelectedArtwork] = useState<Artwork | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [featuredArtworks, setFeaturedArtworks] = useState<Artwork[]>([]);
 
@@ -53,6 +55,7 @@ export const FeaturedWorks = () => {
 
     const fetchFeatured = async () => {
       try {
+        setIsLoading(true);
         const res = await getArtworks({
           featured: true,
           page: 1,
@@ -63,6 +66,8 @@ export const FeaturedWorks = () => {
       } catch (error) {
         console.error(error);
         setFeaturedArtworks([]); // safety fallback
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -107,42 +112,52 @@ export const FeaturedWorks = () => {
 
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-          {featuredArtworks.map((artwork) => (
-            <article
-              key={artwork._id}
-              data-gsap-card
-              className="group cursor-pointer"
-              onClick={() => setSelectedArtwork(artwork)}
-            >
-              <div className="gallery-card">
-                <div className="gallery-image-wrapper aspect-[4/5] overflow-hidden">
-                  <img
-                    src={artwork.image}
-                    alt={artwork.title}
-                    className="w-full h-full object-cover will-change-transform"
-                    loading="lazy"
-                  />
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-all duration-500 flex items-center justify-center">
-                    <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-background/90 px-4 py-2 rounded-sm text-sm font-body tracking-wide">
-                      View Details
-                    </span>
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, index) => (
+                <div key={index} className="space-y-4">
+                  <Skeleton className="aspect-[4/5] rounded-lg" />
+                  <Skeleton className="h-6 w-24" />
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-5/6" />
+                </div>
+              ))
+            : featuredArtworks.map((artwork) => (
+                <article
+                  key={artwork._id}
+                  data-gsap-card
+                  className="group cursor-pointer"
+                  onClick={() => setSelectedArtwork(artwork)}
+                >
+                  <div className="gallery-card">
+                    <div className="gallery-image-wrapper aspect-[4/5] overflow-hidden">
+                      <img
+                        src={artwork.image}
+                        alt={artwork.title}
+                        className="w-full h-full object-cover will-change-transform"
+                        loading="lazy"
+                      />
+                      {/* Overlay */}
+                      <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/20 transition-all duration-500 flex items-center justify-center">
+                        <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-background/90 px-4 py-2 rounded-sm text-sm font-body tracking-wide">
+                          View Details
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <span className="text-xs uppercase tracking-wider text-muted-foreground font-body">
+                        {artwork.medium}
+                      </span>
+                      <h3 className="mt-2 font-display text-xl font-medium text-foreground group-hover:text-gallery-olive transition-colors">
+                        {artwork.title}
+                      </h3>
+                      <p className="mt-2 text-sm text-muted-foreground font-body line-clamp-2">
+                        {artwork.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="p-6">
-                  <span className="text-xs uppercase tracking-wider text-muted-foreground font-body">
-                    {artwork.medium}
-                  </span>
-                  <h3 className="mt-2 font-display text-xl font-medium text-foreground group-hover:text-gallery-olive transition-colors">
-                    {artwork.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-muted-foreground font-body line-clamp-2">
-                    {artwork.description}
-                  </p>
-                </div>
-              </div>
-            </article>
-          ))}
+                </article>
+              ))}
         </div>
 
         {/* CTA */}

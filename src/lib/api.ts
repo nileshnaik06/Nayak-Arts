@@ -2,9 +2,9 @@ import axios from "axios";
 import type { PaginatedResponse, Artwork } from "@/data/artworks";
 
 const API_URL = import.meta.env.VITE_API_URL;
-const token = localStorage.getItem("token");
+// const token = localStorage.getItem("token");
 
-axios.defaults.withCredentials = true;
+// axios.defaults.withCredentials = true;
 
 export const registerUser = async (data: {
   userName: string;
@@ -32,12 +32,15 @@ export const getCurrentUser = async () => {
   }
 };
 
-export const getArtworks = async (params?: any): Promise<PaginatedResponse> => {
+export const getArtworks = async (): Promise<PaginatedResponse> => {
+  const token = localStorage.getItem("token");
+
   const res = await axios.get(`${API_URL}/api/images`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
+
   return res.data;
 };
 
@@ -47,18 +50,32 @@ export const getSingleArtwork = async (id: string): Promise<Artwork> => {
 };
 
 export const createImage = async (formData: FormData) => {
+  const token = localStorage.getItem("token");
+
   return axios.post(`${API_URL}/api/images`, formData, {
     headers: {
+      Authorization: `Bearer ${token}`,
       "Content-Type": "multipart/form-data",
     },
-    withCredentials: true,
   });
 };
 
 export const updateImage = async (id: string, data: any) => {
-  return axios.put(`${API_URL}/api/images/${id}`, data);
+  const token = localStorage.getItem("token");
+
+  return axios.put(`${API_URL}/api/images/${id}`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
 
 export const deleteImage = async (id: string) => {
-  return axios.delete(`${API_URL}/api/images/${id}`);
+  const token = localStorage.getItem("token");
+
+  return axios.delete(`${API_URL}/api/images/${id}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
 };
