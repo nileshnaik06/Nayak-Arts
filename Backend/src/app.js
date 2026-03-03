@@ -3,6 +3,7 @@ const cors = require("cors");
 const user = require("./Routes/user.routes");
 const images = require("./Routes/image.routes");
 const cookieParser = require("cookie-parser");
+const contactRoutes = require("./Routes/contact.routes");
 
 const app = express();
 app.use(express.json());
@@ -16,5 +17,5 @@ app.use(cookieParser());
 
 app.use("/api/user", user);
 app.use("/api/images", images);
-
+app.use("/api", contactRoutes);
 module.exports = app;
