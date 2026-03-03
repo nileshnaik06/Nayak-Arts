@@ -199,6 +199,12 @@ const AdminDashboard = () => {
               <p className="text-lg font-semibold text-gray-900">{user?.userName || "User"}</p>
             </div>
             <button
+              onClick={() => navigate("/")}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold transition duration-200 w-full sm:w-auto"
+            >
+              Back to Home
+            </button>
+            <button
               onClick={handleLogout}
               className="bg-red-600 hover:bg-red-700 text-white px-4 sm:px-6 py-2 rounded-lg font-semibold transition duration-200 w-full sm:w-auto"
             >

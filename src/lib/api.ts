@@ -11,6 +11,7 @@ export const registerUser = async (data: {
   password: string;
 }) => {
   const response = await axios.post(`${API_URL}/api/user/register`, data);
+  localStorage.setItem("token", response.data.token);
   return response.data;
 };
 
@@ -19,6 +20,7 @@ export const loginUser = async (data: {
   password: string;
 }) => {
   const response = await axios.post(`${API_URL}/api/user/login`, data);
+  localStorage.setItem("token", response.data.token);
   return response.data;
 };
 
@@ -62,12 +64,13 @@ export const createImage = async (formData: FormData) => {
 
 export const updateImage = async (id: string, data: any) => {
   const token = localStorage.getItem("token");
-
-  return axios.put(`${API_URL}/api/images/${id}`, data, {
+  const response = await axios.put(`${API_URL}/api/images/${id}`, data, {
     headers: {
       Authorization: `Bearer ${token}`,
+      "Content-Type": "multipart/form-data",
     },
   });
+  return response;
 };
 
 export const deleteImage = async (id: string) => {

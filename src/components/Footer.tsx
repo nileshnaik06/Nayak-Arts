@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
 import { Instagram, Mail, MapPin } from "lucide-react";
+import { useAuth } from "../contexts/AuthContext";
 
 export const Footer = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <footer className="bg-secondary/50 border-t border-border">
       <div className="gallery-container py-16 lg:py-20">
@@ -19,7 +22,15 @@ export const Footer = () => {
               paintings, models, and DIY art—crafting beauty across multiple
               mediums.
             </p>
-            <Link to="/register" className="py-5 text-[#000000] font-body underline">Register</Link>
+            {isAuthenticated ? (
+              <Link to="/admin" className="py-5 text-[#000000] font-body underline">
+                Admin Dashboard
+              </Link>
+            ) : (
+              <Link to="/register" className="py-5 text-[#000000] font-body underline">
+                Register
+              </Link>
+            )}
           </div>
 
           {/* Quick Links */}

@@ -56,11 +56,7 @@ export const FeaturedWorks = () => {
     const fetchFeatured = async () => {
       try {
         setIsLoading(true);
-        const res = await getArtworks({
-          featured: true,
-          page: 1,
-          limit: 6,
-        });
+        const res = await getArtworks();
 
         setFeaturedArtworks(res.data || []);
       } catch (error) {

@@ -17,6 +17,14 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper function to set token cookie with 7-day expiration
+const setTokenCookie = (token: string) => {
+  const expirationDate = new Date();
+  expirationDate.setTime(expirationDate.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days
+  const expires = `expires=${expirationDate.toUTCString()}`;
+  document.cookie = `token=${token}; ${expires}; path=/; SameSite=Lax`;
+};
+
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,11 +44,19 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const login = (userData: User) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setTokenCookie(token);
+    }
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
   };
 
   const register = (userData: User) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      setTokenCookie(token);
+    }
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
   };
