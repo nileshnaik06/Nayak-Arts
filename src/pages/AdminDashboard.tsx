@@ -75,18 +75,24 @@ const AdminDashboard = () => {
     try {
       if (editingId) {
         // Update existing image
-        await updateImageApi(editingId, {
-          title: formData.title,
-          category: formData.category,
-          medium: formData.medium,
-          description: formData.description,
-          year: formData.year,
-          featured: formData.featured,
-        });
+        const updateFormData = new FormData();
+        
+        if (imageFile) {
+          updateFormData.append("image", imageFile);
+        }
+        
+        updateFormData.append("title", formData.title);
+        updateFormData.append("category", formData.category);
+        updateFormData.append("medium", formData.medium);
+        updateFormData.append("description", formData.description);
+        updateFormData.append("year", String(formData.year));
+        updateFormData.append("featured", String(formData.featured));
+
+        await updateImageApi(editingId, updateFormData);
 
         setImages((prev) =>
           prev.map((img) =>
-            img._id === editingId ? { ...img, ...formData } : img
+            img._id === editingId ? { ...img, ...formData, image: imageFile ? URL.createObjectURL(imageFile) : img.image } : img
           )
         );
 
@@ -334,34 +340,32 @@ const AdminDashboard = () => {
                 />
               </div>
 
-              {/* Image Upload (Only for new images) */}
-              {!editingId && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Image *
+              {/* Image Upload */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Image {!editingId && "*"}
+                </label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    required={!editingId}
+                    className="hidden w-full"
+                    id="image-input"
+                  />
+                  <label htmlFor="image-input" className="cursor-pointer">
+                    <div className="text-gray-600">
+                      <p className="text-sm font-medium">Click to upload {editingId ? "(optional)" : ""}</p>
+                      <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
+                      {imageFile && <p className="text-blue-600 mt-2 font-medium">{imageFile.name}</p>}
+                    </div>
                   </label>
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-blue-500 transition">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      required={!editingId}
-                      className="hidden w-full"
-                      id="image-input"
-                    />
-                    <label htmlFor="image-input" className="cursor-pointer">
-                      <div className="text-gray-600">
-                        <p className="text-sm font-medium">Click to upload</p>
-                        <p className="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 10MB</p>
-                        {imageFile && <p className="text-blue-600 mt-2 font-medium">{imageFile.name}</p>}
-                      </div>
-                    </label>
-                  </div>
                 </div>
-              )}
+              </div>
 
               {/* Current Image Preview (When editing) */}
-              {editingId && formData.image && (
+              {editingId && formData.image && !imageFile && (
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Current Image

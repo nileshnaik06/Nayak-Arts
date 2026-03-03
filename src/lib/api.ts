@@ -2,6 +2,7 @@ import axios from "axios";
 import type { PaginatedResponse, Artwork } from "@/data/artworks";
 
 const API_URL = import.meta.env.VITE_API_URL;
+const token = localStorage.getItem("token");
 
 axios.defaults.withCredentials = true;
 
@@ -33,7 +34,9 @@ export const getCurrentUser = async () => {
 
 export const getArtworks = async (params?: any): Promise<PaginatedResponse> => {
   const res = await axios.get(`${API_URL}/api/images`, {
-    params,
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
   });
   return res.data;
 };
