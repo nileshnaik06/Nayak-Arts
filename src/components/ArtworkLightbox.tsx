@@ -1,8 +1,9 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
-import { useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import type { Artwork } from '@/data/artworks';
+import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
+import { useEffect } from "react";
+import { createPortal } from "react-dom";
+import type { Artwork } from "@/data/artworks";
+import { useNavigate } from "react-router-dom";
 
 interface ArtworkLightboxProps {
   artwork: Artwork | null;
@@ -10,20 +11,22 @@ interface ArtworkLightboxProps {
 }
 
 export const ArtworkLightbox = ({ artwork, onClose }: ArtworkLightboxProps) => {
+  const navigate = useNavigate();
+
   // Close on escape key
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === "Escape") onClose();
     };
 
     if (artwork) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
+      document.addEventListener("keydown", handleEscape);
+      document.body.style.overflow = "hidden";
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = '';
+      document.removeEventListener("keydown", handleEscape);
+      document.body.style.overflow = "";
     };
   }, [artwork, onClose]);
 
@@ -77,7 +80,7 @@ export const ArtworkLightbox = ({ artwork, onClose }: ArtworkLightboxProps) => {
             <h2 className="mt-2 font-display text-2xl md:text-3xl lg:text-4xl font-medium text-foreground">
               {artwork.title}
             </h2>
-            
+
             <div className="mt-4 md:mt-8 space-y-4 md:space-y-6">
               <div>
                 <span className="block text-xs uppercase tracking-wider text-muted-foreground font-body mb-1">
@@ -85,7 +88,7 @@ export const ArtworkLightbox = ({ artwork, onClose }: ArtworkLightboxProps) => {
                 </span>
                 <p className="font-body text-foreground">{artwork.medium}</p>
               </div>
-              
+
               <div>
                 <span className="block text-xs uppercase tracking-wider text-muted-foreground font-body mb-1">
                   About This Piece
@@ -98,12 +101,12 @@ export const ArtworkLightbox = ({ artwork, onClose }: ArtworkLightboxProps) => {
               <div className="pt-6 border-t border-border">
                 <p className="text-sm text-muted-foreground font-body">
                   Interested in this piece? <br />
-                  <a
-                    href="mailto:hello@artistry.com"
+                  <button
+                    onClick={() => navigate("/contact")}
                     className="text-foreground hover:text-gallery-olive transition-colors underline underline-offset-4"
                   >
                     Contact for inquiries
-                  </a>
+                  </button>
                 </p>
               </div>
             </div>
